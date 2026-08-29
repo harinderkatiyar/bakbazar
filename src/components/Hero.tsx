@@ -9,7 +9,7 @@ const stats = [
 ];
 
 const sampleListings = [
-  { title: "Royal Enfield Classic 350", price: "$1,380", loc: "Kanpur", tone: "rotate-[-3deg]" },
+ 
   { title: "iPhone 13, 128GB", price: "$385", loc: "Kanpur", tone: "rotate-[2deg] translate-x-6" },
 ];
 
@@ -32,25 +32,6 @@ export const Hero = () => {
         <p className="mx-auto text-base text-muted-foreground md:w-10/12 lg:mx-0">
           Buy and sell anything near you — vehicles, electronics, furniture, and more.
         </p>
-
-        {/* Primary hero action: the search bar itself */}
-        <div className="mx-auto flex max-w-xl flex-col gap-2 rounded-2xl border border-[#14213D]/10 bg-white p-1.5 shadow-md dark:bg-white/5 dark:border-white/10 sm:flex-row sm:items-center lg:mx-0">
-          <div className="flex flex-1 items-center gap-2 px-2">
-            <Search className="h-4 w-4 shrink-0 text-[#14213D]/40 dark:text-white/40" />
-            <Input
-              placeholder="Search cars, mobiles, furniture..."
-              className="border-0 shadow-none focus-visible:ring-0 bg-transparent px-0 h-9"
-            />
-          </div>
-          <div className="hidden h-6 w-px bg-[#14213D]/10 dark:bg-white/10 sm:block" />
-          <div className="flex shrink-0 items-center gap-1.5 px-2 text-sm text-[#14213D]/70 dark:text-white/70">
-            <MapPin className="h-4 w-4 text-[#0F5257]" />
-            Kanpur
-          </div>
-          <Button className="gap-1.5 rounded-xl bg-[#C4432B] hover:bg-[#a8371f]">
-            Search <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
 
         {/* Trust stats — single compact row */}
         <div className="mx-auto flex max-w-xl justify-center gap-6 lg:mx-0 lg:justify-start">

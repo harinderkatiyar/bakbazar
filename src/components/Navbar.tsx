@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, MapPin, MessageCircle, Heart, Plus, Menu, ChevronDown, User } from "lucide-react";
+import { Search, MessageCircle, Heart, Menu, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -10,8 +10,11 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ModeToggle } from "./mode-toggle";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { SellButton } from "./SellButton";
+import { LocationPicker } from "./LocationPicker";
 
-// 👇 Change this once your final brand name is decided
 const BRAND_NAME = "Bikbazar";
 
 const categories = [
@@ -27,6 +30,8 @@ const categories = [
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#14213D]/10 bg-[#FBF7F0]/95 backdrop-blur supports-[backdrop-filter]:bg-[#FBF7F0]/80 dark:bg-[#0B0F14]/95 dark:border-white/10">
@@ -41,16 +46,8 @@ export const Navbar = () => {
           <span className="text-[#C4432B]">{BRAND_NAME.slice(3)}</span>
         </a>
 
-        {/* Location pill — desktop only */}
-        <button className="hidden shrink-0 items-center gap-1.5 rounded-full border border-[#14213D]/15 px-3 py-2 text-sm font-medium text-[#14213D] hover:bg-[#14213D]/5 md:flex dark:text-white dark:border-white/15 dark:hover:bg-white/5">
-          <MapPin className="h-4 w-4 text-[#0F5257]" />
-          <span>Kanpur</span>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E9A319] opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#E9A319]" />
-          </span>
-          <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-        </button>
+        {/* Location — desktop only */}
+        <LocationPicker />
 
         {/* Search bar — desktop */}
         <div className="hidden flex-1 items-center rounded-full border border-[#14213D]/15 bg-white shadow-sm md:flex dark:bg-white/5 dark:border-white/15">
@@ -75,14 +72,18 @@ export const Navbar = () => {
             <MessageCircle className="h-5 w-5" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#C4432B]" />
           </Button>
-          <Button variant="ghost" className="gap-1.5 text-[#14213D] dark:text-white">
-            <User className="h-4 w-4" />
-            Login
-          </Button>
-          <Button className="ml-1 gap-1.5 rounded-full bg-[#C4432B] px-4 text-white hover:bg-[#a8371f]">
-            <Plus className="h-4 w-4" />
-            Sell
-          </Button>
+          {user ? (
+            <Button variant="ghost" onClick={logout} className="gap-1.5 text-[#14213D] dark:text-white">
+              <img src={user.photoURL ?? ""} className="h-6 w-6 rounded-full" alt="" />
+              {user.displayName?.split(" ")[0]}
+            </Button>
+          ) : (
+            <Button variant="ghost" onClick={() => navigate("/login")} className="gap-1.5 text-[#14213D] dark:text-white">
+              <User className="h-4 w-4" />
+              Login
+            </Button>
+          )}
+          <SellButton className="ml-1" />
           <ModeToggle />
         </div>
 
@@ -108,21 +109,35 @@ export const Navbar = () => {
                 </SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col gap-1">
-                <button className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5">
-                  <MapPin className="h-4 w-4 text-[#0F5257]" /> Kanpur
-                </button>
-                <button className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5">
-                  <User className="h-4 w-4" /> Login / Sign up
-                </button>
+                {user ? (
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5"
+                  >
+                    <img src={user.photoURL ?? ""} className="h-4 w-4 rounded-full" alt="" />
+                    Logout ({user.displayName?.split(" ")[0]})
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5"
+                  >
+                    <User className="h-4 w-4" /> Login / Sign up
+                  </button>
+                )}
                 <button className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5">
                   <MessageCircle className="h-4 w-4" /> Chats
                 </button>
                 <button className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-[#14213D]/5 dark:hover:bg-white/5">
                   <Heart className="h-4 w-4" /> Wishlist
                 </button>
-                <Button className="mt-3 gap-1.5 rounded-full bg-[#C4432B] text-white hover:bg-[#a8371f]">
-                  <Plus className="h-4 w-4" /> Sell an item
-                </Button>
+                <SellButton className="mt-3 w-full" />
               </nav>
             </SheetContent>
           </Sheet>
